@@ -65,3 +65,36 @@ int main() {
 
     return 0;
 }
+/*
+// Iterative heapify function
+void heapifyIterative(int a[], int n, int k) {
+    int largest, left, right;
+    int temp;
+
+    while (k <= n / 2) { // Only process non-leaf nodes
+        left = 2 * k;         // Left child index
+        right = 2 * k + 1;    // Right child index
+        largest = k;          // Start with the root as the largest
+
+        // Check if left child exists and is greater than root
+        if (left <= n && a[left] > a[largest])
+            largest = left;
+
+        // Check if right child exists and is greater than the largest so far
+        if (right <= n && a[right] > a[largest])
+            largest = right;
+
+        // If the root is already the largest, stop
+        if (largest == k)
+            break;
+
+        // Swap the root with the largest child
+        temp = a[k];
+        a[k] = a[largest];
+        a[largest] = temp;
+
+        // Move to the next level of the heap
+        k = largest;
+    }
+}
+    */
