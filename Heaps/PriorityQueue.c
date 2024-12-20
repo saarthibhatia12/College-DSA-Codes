@@ -2,43 +2,38 @@
 #include <stdlib.h> 
 
 // Function to heapify an array to create a max-heap
-void heapify(int a[10], int n) 
-{ 
-    int i, k, v, j, flag = 0; 
-
-    // Start from the last non-leaf node and move upwards
-    for (i = n / 2; i >= 1; i--) 
-    { 
-        k = i; // Start with the current root node
-        v = a[k]; // Store the value of the root
-
-        // Reorganize the subtree rooted at index k
-        while (!flag && 2 * k <= n) 
-        { 
-            j = 2 * k; // Left child
-            if (j < n) 
-            { 
-                // Compare left and right child, choose the larger one
-                if (a[j] < a[j + 1]) 
-                    j = j + 1; 
-            } 
-
-            // If the root is greater or equal to the larger child, stop
-            if (v >= a[j]) 
-                flag = 1; 
-            else 
-            { 
-                // Swap the root with the larger child and move down the tree
-                a[k] = a[j]; 
-                k = j; 
-            } 
-        } 
-
-        // Place the original value of the root in its correct position
-        a[k] = v; 
-        flag = 0; // Reset flag for the next iteration
-    } 
-} 
+void heapify(int a[10], int n)
+{
+    int i, k, v, j, flag = 0; // Variables:
+                              // i = current parent index
+                              // k = parent being adjusted
+                              // v = value of the parent node
+                              // j = child index
+                              // flag = stop condition
+    for (i = n / 2; i >= 1; i--) // Start from the last parent node (n/2) and go up to the root (1).
+    {
+        k = i;                // Start adjusting the parent at index `i`.
+        v = a[k];             // Save the parent value.
+        while (!flag && 2 * k <= n) // Keep adjusting while the node has children.
+        {
+            j = 2 * k;        // Left child index.
+            if (j < n)        // Check if the right child exists.
+            {
+                if (a[j] < a[j + 1]) // If right child is larger, use it.
+                    j = j + 1;
+            }
+            if (v >= a[j])    // If the parent is larger than or equal to the larger child, stop.
+                flag = 1;
+            else              // Otherwise, swap parent with the larger child.
+            {
+                a[k] = a[j];
+                k = j;        // Move down to the child position.
+            }
+        }
+        a[k] = v;            // Place the original parent value in the correct position.
+        flag = 0;            // Reset flag for the next iteration.
+    }
+}
 
 // Main function
 int main() 
