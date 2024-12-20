@@ -20,9 +20,11 @@ int hash2(int key) {
 void insert(int key) {
     int index = hash1(key);
     int step = hash2(key);
-    
+
     int i = 0;
-    while (hashTable[(index + i * step) % TABLE_SIZE] != -1 && i < TABLE_SIZE) {
+    while (hashTable[(index + i * step) % TABLE_SIZE] != -1 &&
+           hashTable[(index + i * step) % TABLE_SIZE] != -2 && // Skip deleted slots
+           i < TABLE_SIZE) {
         i++;
     }
 
@@ -49,13 +51,26 @@ int search(int key) {
     return -1; // Key not found
 }
 
+// Function to delete a key from the hash table
+void deleteKey(int key) {
+    int index = search(key);
+    if (index != -1) {
+        hashTable[index] = -2; // Mark the slot as deleted
+        printf("Key %d deleted successfully.\n", key);
+    } else {
+        printf("Key %d not found!\n", key);
+    }
+}
+
 // Function to display the hash table
 void display() {
     for (int i = 0; i < TABLE_SIZE; i++) {
-        if (hashTable[i] != -1) {
-            printf("Index %d: %d\n", i, hashTable[i]);
-        } else {
+        if (hashTable[i] == -1) {
             printf("Index %d: ~\n", i);
+        } else if (hashTable[i] == -2) {
+            printf("Index %d: (Deleted)\n", i);
+        } else {
+            printf("Index %d: %d\n", i, hashTable[i]);
         }
     }
 }
@@ -71,8 +86,9 @@ int main() {
         printf("\nDouble Hashing Menu:\n");
         printf("1. Insert\n");
         printf("2. Search\n");
-        printf("3. Display\n");
-        printf("4. Exit\n");
+        printf("3. Delete\n");
+        printf("4. Display\n");
+        printf("5. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
@@ -93,9 +109,14 @@ int main() {
             }
             break;
         case 3:
-            display();
+            printf("Enter key to delete: ");
+            scanf("%d", &key);
+            deleteKey(key);
             break;
         case 4:
+            display();
+            break;
+        case 5:
             exit(0);
         default:
             printf("Invalid choice! Please try again.\n");
