@@ -28,7 +28,7 @@ char *receive(QUEUE *q)
     if(q->front==-1) 
     { 
         printf("\n Queue empty"); 
-        return -1; 
+        return '\0'; 
     } 
     else 
     { 
@@ -44,17 +44,17 @@ char *receive(QUEUE *q)
     } 
 } 
  
-void display(QUEUE q) 
+void display(QUEUE*q) 
 { 
     int i; 
-    if(q.front==-1) 
+    if(q->front==-1) 
         printf("\n Queue Empty"); 
     else 
     { 
         printf("\n Queue content are\n"); 
-        for(i=q.front;i!=q.rear;i=(i+1)%SIZE) 
-            printf("%s\n",q.data[i]); 
-        printf("%s\n",q.data[i]); 
+        for(i=q->front;i!=q->rear;i=(i+1)%SIZE) 
+            printf("%s\n",q->data[i]); 
+        printf("%s\n",q->data[i]); 
     } 
  
 } 
@@ -64,9 +64,9 @@ int main()
     int ch; 
     char *del; 
     char item[20]; 
-    QUEUE q; 
-    q.front=-1; 
-    q.rear=-1; 
+    QUEUE*q=(QUEUE*)malloc(sizeof(QUEUE));
+    q->front=-1; 
+    q->rear=-1; 
     for(;;) 
     { 
     printf("\n1. Send\n2. Receive\n3. Display\n4. Exit"); 
@@ -76,10 +76,10 @@ int main()
     switch(ch) 
     { 
         case 1:printf("\n Read msg to be send :"); 
-               gets(item); 
-               send(&q,item); 
+               scanf("%s",&item);
+               send(q,item); 
                break; 
-        case 2:del=receive(&q); 
+        case 2:del=receive(q); 
                 if(del!=NULL) 
                     printf("\n Element deleted is %s\n",del); 
                 break; 
