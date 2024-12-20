@@ -2,36 +2,27 @@
 #include <stdlib.h> 
 
 // Function to heapify an array to create a max-heap
-void heapify(int a[10], int n)
+void heapify(int a[], int n)
 {
-    int i, k, v, j, flag = 0; // Variables:
-                              // i = current parent index
-                              // k = parent being adjusted
-                              // v = value of the parent node
-                              // j = child index
-                              // flag = stop condition
-    for (i = n / 2; i >= 1; i--) // Start from the last parent node (n/2) and go up to the root (1).
+    for (int i = n / 2; i >= 1; i--) // Start from the last parent node and go up to the root.
     {
-        k = i;                // Start adjusting the parent at index `i`.
-        v = a[k];             // Save the parent value.
-        while (!flag && 2 * k <= n) // Keep adjusting while the node has children.
+        int k = i;                // Current parent index.
+        int v = a[k];             // Store parent value.
+
+        while (2 * k <= n)        // While the parent has at least one child.
         {
-            j = 2 * k;        // Left child index.
-            if (j < n)        // Check if the right child exists.
-            {
-                if (a[j] < a[j + 1]) // If right child is larger, use it.
-                    j = j + 1;
-            }
-            if (v >= a[j])    // If the parent is larger than or equal to the larger child, stop.
-                flag = 1;
-            else              // Otherwise, swap parent with the larger child.
-            {
-                a[k] = a[j];
-                k = j;        // Move down to the child position.
-            }
+            int j = 2 * k;        // Left child index.
+            if (j < n && a[j] < a[j + 1]) // Use the right child if it is larger.
+                j = j + 1;
+
+            if (v >= a[j])        // Stop if the parent is larger than the larger child.
+                break;
+
+            a[k] = a[j];          // Move the larger child up.
+            k = j;                // Update the parent index.
         }
-        a[k] = v;            // Place the original parent value in the correct position.
-        flag = 0;            // Reset flag for the next iteration.
+
+        a[k] = v;                // Place the original parent value in the correct position.
     }
 }
 
