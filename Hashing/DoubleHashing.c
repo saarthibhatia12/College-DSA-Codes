@@ -13,7 +13,7 @@ int hash1(int key) {
 
 // Function to calculate the secondary hash
 int hash2(int key) {
-    return PRIME - (key % PRIME);
+    return PRIME - (key % PRIME); //This ensures the step size is non-zero.
 }
 
 // Function to insert a key into the hash table
