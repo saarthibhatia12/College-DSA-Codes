@@ -1,6 +1,4 @@
-
-// Iterative------------------->
- #include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -13,36 +11,34 @@ typedef struct Node {
 } Node;
 
 // Function to insert a node at the rear of the circular linked list
-void insert(Node** list, char* name) {
+Node* insert(Node* list, char* name) {
     Node* new_node = (Node*)malloc(sizeof(Node));
     strcpy(new_node->info, name);
-    if (*list == NULL) {
-        *list = new_node;
+    if (list == NULL) {
         new_node->next = new_node;  // Circular link to itself
+        return new_node;
     } else {
-        Node* temp = *list;
-        while (temp->next != *list) {
+        Node* temp = list;
+        while (temp->next != list) {
             temp = temp->next;
         }
         temp->next = new_node;
-        new_node->next = *list;
+        new_node->next = list;
+        return list;
     }
 }
 
 // Function to delete the node after the current position
-void delafter(Node** list, char* name) {
-    Node* to_delete = (*list)->next;
+Node* delafter(Node* list, char* name) {
+    Node* to_delete = list->next;
     strcpy(name, to_delete->info);  // Copy the name of the node to be deleted
-    (*list)->next = to_delete->next;
-    if (to_delete == *list) {
-        *list = (*list)->next;  // Update the list pointer if necessary
+    if (to_delete == list) {        // If there is only one node
+        free(to_delete);
+        return NULL;
     }
+    list->next = to_delete->next;
     free(to_delete);
-}
-
-// Function to free the remaining node
-void freenode(Node* list) {
-    free(list);
+    return list;
 }
 
 // Function to solve the Josephus problem
@@ -63,23 +59,25 @@ void josephus(void) {
         if (strcmp(name, end) == 0) {
             break;
         }
-        insert(&list, name);
+        list = insert(list, name);
     }
 
     printf("The order in which the soldiers are eliminated is:\n");
 
     // Continue eliminating nodes until one remains
-    while (list->next != list) {
+    while (list != NULL && list->next != list) {
         for (i = 1; i < n; i++) {
             list = list->next;  // Move to the next node
         }
-        delafter(&list, name);
+        list = delafter(list, name);
         printf("%s\n", name);  // Print the eliminated name
     }
 
     // Print the last remaining soldier
-    printf("The soldier who escapes is: %s\n", list->info);
-    freenode(list);
+    if (list != NULL) {
+        printf("The soldier who escapes is: %s\n", list->info);
+        free(list);
+    }
 }
 
 int main() {
