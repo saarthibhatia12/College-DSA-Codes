@@ -47,15 +47,19 @@ Node* insertAtEnd(Node *head, int data) {
     return head;
 }
 
-// Function to insert after a specific position
 Node* insertAfterPosition(Node *head, int position, int data) {
     if (head == NULL) {
         printf("List is empty. Insert at beginning instead.\n");
         return head;
     }
 
+    if (position < 1) {
+        printf("Invalid position.\n");
+        return head;
+    }
+
     Node *current = head;
-    for (int i = 0; i < position; i++) {
+    for (int i = 1; i < position; i++) {
         current = current->next;
         if (current == head) {
             printf("Position out of range.\n");
@@ -112,15 +116,20 @@ Node* deleteFromEnd(Node *head) {
     return head;
 }
 
-// Function to delete a node at a specific position
+// Function to delete a node at a specific position (1-based indexing)
 Node* deleteAtPosition(Node *head, int position) {
     if (head == NULL) {
         printf("List is empty.\n");
         return NULL;
     }
 
+    if (position < 1) {
+        printf("Invalid position.\n");
+        return head;
+    }
+
     Node *current = head;
-    for (int i = 0; i < position; i++) {
+    for (int i = 1; i < position; i++) {
         current = current->next;
         if (current == head) {
             printf("Position out of range.\n");
