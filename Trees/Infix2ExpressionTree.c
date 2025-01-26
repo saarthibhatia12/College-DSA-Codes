@@ -1,161 +1,111 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <math.h>
+#define MAX 100
 
-typedef struct node
-{
+typedef struct node{
     char data;
-    struct node *left;
     struct node *right;
-} Node;
+    struct node *left;
+}NODE;
 
-typedef struct stack
-{
+typedef struct stack{
     int top;
-    Node *data[10];
-} STACK;
+    NODE* item[MAX];
+}STACK;
 
-void push(STACK *s, Node *item)
-{
-    s->data[++(s->top)] = item;
-}
-
-Node *pop(STACK *s)
-{
-    return s->data[(s->top)--];
-}
-
-int preced(char symbol)
-{
-    switch (symbol)
-    {
-    case '$':
-        return 5;
-    case '*':
-    case '/':
-        return 3;
-    case '+':
-    case '-':
-        return 1;
-    default:
-        return 0;
-    }
-}
-
-Node *create_node(char item)
-{
-    Node *temp;
-    temp = (Node *)malloc(sizeof(Node));
-    temp->data = item;
-    temp->left = NULL;
+NODE* getNode(char data){
+    NODE* temp = (NODE*)malloc(sizeof(NODE));
     temp->right = NULL;
+    temp->left = NULL;
+    temp->data = data;
     return temp;
 }
 
-void preorder(Node *root)
-{
-    if (root != NULL)
-    {
-        printf("%c", root->data);
-        preorder(root->left);
-        preorder(root->right);
-    }
+void push(STACK *st,NODE* item){
+    if(st->top==MAX-1) return;
+    else st->item[++(st->top)] = item;
 }
 
-void inorder(Node *root)
-{
-    if (root != NULL)
-    {
-        inorder(root->left);
-        printf("%c", root->data);
-        inorder(root->right);
-    }
+NODE* pop(STACK *st){
+    if(st->top==-1) return NULL;
+    return st->item[(st->top)--];
 }
 
-void postorder(Node *root)
-{
-    if (root != NULL)
-    {
-        postorder(root->left);
-        postorder(root->right);
-        printf("%c", root->data);
-    }
-}
-
-Node *create_expr_tree(Node *root, char infix[10])
-{
-    STACK *TS = (STACK *)malloc(sizeof(STACK));
-    STACK *OS = (STACK *)malloc(sizeof(STACK));
-    TS->top = -1;
-    OS->top = -1;
-
-    int i;
-    char symbol;
-    Node *temp, *t;
-
-    for (i = 0; infix[i] != '\0'; i++)
-    {
-        symbol = infix[i];
-        temp = create_node(symbol);
-
-        if (isalnum(symbol))
-        {
-            push(TS, temp);
-        }
-        else
-        {
-            if (OS->top == -1)
-            {
-                push(OS, temp);
-            }
-            else
-            {
-                while (OS->top != -1 && preced(OS->data[OS->top]->data) >= preced(symbol))
-                {
-                    t = pop(OS);
-                    t->right = pop(TS);
-                    t->left = pop(TS);
-                    push(TS, t);
-                }
-                push(OS, temp);
-            }
-        }
-    }
-
-    while (OS->top != -1)
-    {
-        t = pop(OS);
-        t->right = pop(TS);
-        t->left = pop(TS);
-        push(TS, t);
-    }
-
-    free(OS);
-    root = pop(TS);
-    free(TS);
-
-    return root;
-}
-
-int main()
-{
-    char infix[10];
-    Node *root = NULL;
-
-    printf("\n Read the infix expression :");
-    scanf("%s", infix);
-
-    root = create_expr_tree(root, infix);
-
-    printf("\n The preorder traversal is\n");
-    preorder(root);
-
-    printf("\n The inorder traversal is\n");
-    inorder(root);
-
-    printf("\n The postorder traversal is\n");
-    postorder(root);
-
+int isempty(STACK* st){
+    if(st->top==-1) return 1;
     return 0;
 }
 
+int prio(char c){
+    switch(c){
+        case '^' : return 3;
+        case '*':
+        case '/':return 2;
+        case '+':
+        case '-':return 1;
+        default : return -1;
+    }
+}
+
+NODE* converter(char *a){
+    int n = strlen(a);
+    STACK TS,OS;
+    TS.top=-1;
+    OS.top = -1;
+    for(int i=0;i<n;i++){
+        NODE* x = getNode(a[i]);
+        if(isalnum(a[i])){
+            push(&TS,x);
+        }
+        else if(a[i]=='('){
+            push(&OS,x);
+        }
+        else if(a[i]==')'){
+            while(!isempty(&OS) && (OS.item[OS.top])->data!='('){
+                NODE* temp = getNode((OS.item[OS.top])->data);
+                temp->right = pop(&TS);
+                temp->left = pop(&TS);
+                push(&TS,temp);
+                pop(&OS);
+            }
+            pop(&OS);
+
+        }
+        else{
+            while(!isempty(&OS) && prio((OS.item[OS.top])->data)>=prio(a[i])){
+                NODE* temp = getNode((OS.item[OS.top])->data);
+                temp->right = pop(&TS);
+                temp->left = pop(&TS);
+                push(&TS,temp);
+                pop(&OS);
+            }
+            push(&OS,x);
+        }
+
+    }
+    while(!isempty(&OS)){
+         NODE* temp = getNode((OS.item[OS.top])->data);
+                temp->right = pop(&TS);
+                temp->left = pop(&TS);
+                push(&TS,temp);
+                pop(&OS);
+    }
+    return pop(&TS);
+}
+
+void disp(NODE* root){
+    if(root==NULL) return;   // change this to any order of traversal
+    printf("%c",root->data);
+    disp(root->left);
+    disp(root->right);
+    
+}
+
+int main(){
+    char a[100]= "(4+6)*2";
+    NODE* root = converter(a);
+    disp(root);
+}
