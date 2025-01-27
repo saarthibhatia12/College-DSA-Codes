@@ -1,93 +1,80 @@
-#include <stdio.h> 
-#include <stdlib.h> 
-#include <string.h> 
-#define SIZE 5 
-struct queue 
-{ 
-    int front,rear; 
-    char data[SIZE][20]; 
-}; 
-typedef struct queue QUEUE; 
- 
-void send(QUEUE *q,char item[20]) 
-{ 
-    if(q->front==(q->rear+1) % SIZE ) 
-        printf("\n Queue full"); 
-    else 
-    { 
-        q->rear=(q->rear+1)%SIZE; 
-        strcpy(q->data[q->rear],item); 
-        if(q->front==-1) 
-            q->front=0; 
-    } 
-} 
- 
-char *receive(QUEUE *q) 
-{ 
-    char *del; 
-    if(q->front==-1) 
-    { 
-        printf("\n Queue empty"); 
-        return '\0'; 
-    } 
-    else 
-    { 
-        del=q->data[q->front]; 
-        if(q->front==q->rear) 
-        { 
-            q->front=-1; 
-            q->rear=-1; 
-        } 
-        else 
-            q->front=(q->front+1)% SIZE; 
-        return del; 
-    } 
-} 
- 
-void display(QUEUE*q) 
-{ 
-    int i; 
-    if(q->front==-1) 
-        printf("\n Queue Empty"); 
-    else 
-    { 
-        printf("\n Queue content are\n"); 
-        for(i=q->front;i!=q->rear;i=(i+1)%SIZE) 
-            printf("%s\n",q->data[i]); 
-        printf("%s\n",q->data[i]); 
-    } 
- 
-} 
- 
-int main() 
-{ 
-    int ch; 
-    char *del; 
-    char item[20]; 
-    QUEUE*q=(QUEUE*)malloc(sizeof(QUEUE));
-    q->front=-1; 
-    q->rear=-1; 
-    for(;;) 
-    { 
-    printf("\n1. Send\n2. Receive\n3. Display\n4. Exit"); 
-    printf("\nRead Choice :"); 
-    scanf("%d",&ch); 
-    getchar(); 
-    switch(ch) 
-    { 
-        case 1:printf("\n Read msg to be send :"); 
-               scanf("%s",&item);
-               send(q,item); 
-               break; 
-        case 2:del=receive(q); 
-                if(del!=NULL) 
-                    printf("\n Element deleted is %s\n",del); 
-                break; 
-        case 3:display(q); 
-                break; 
-        default:exit(0); 
-    } 
-    } 
-    return 0; 
- 
-} 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAX 5
+
+typedef struct queue{
+    char item[MAX][20];
+    int front,rear;
+}QUEUE;
+
+void ini(QUEUE *q){
+    q->front = -1;
+    q->rear = -1;
+}
+
+void send(QUEUE *q,char *a){
+    if(q->rear==MAX-1){
+        printf("\nQUEUE is full");
+        return;
+    }
+    else if(q->front==-1){
+        strcpy(q->item[++(q->front)],a);
+        q->rear++;
+    }
+    else{
+        strcpy(q->item[++(q->rear)],a);
+    }
+}
+
+void recieve(QUEUE *q){
+    if(q->front==-1){
+        printf("\nQUEUE is empty..");
+        return;
+    }
+    else{
+        printf("\nThe message recieved is : %s ",q->item[(q->front)++]);
+    }
+    if(q->front>q->rear){
+         q->front = -1;
+        q->rear = -1;  
+    }
+}
+
+void disp(QUEUE *q){
+    if(q->front==-1){
+        printf("\nQUEUE is empty..");
+        return;
+    }
+    else{
+        for(int i=q->front;i<=q->rear;i++){
+            printf("\n%s\t",q->item[i]);
+        }
+    }
+}
+
+int main(){
+    int choice = 0;
+    QUEUE q;
+    ini(&q);
+    char msg[20];
+    while(1){
+        printf("\nENTER your choice : 1.SEND 2.RECIEVE 3.DISPLAY 4.EXIT : ");
+        scanf("%d",&choice);
+        switch(choice){
+            case 1 : 
+            
+            printf("\nEnter your string : ");
+            scanf("%s",msg);
+            send(&q,msg);
+            break;
+            case 2 : 
+            recieve(&q);
+            break;
+            case 3 : 
+            disp(&q);
+            break;
+            case 4 : exit(0);
+        }
+    }
+}
